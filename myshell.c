@@ -22,7 +22,7 @@ void adding_to_env(int argc, char *argv[]) {
     setenv("PATH", new_path, 1);
 }
 
-void parsing_user_command(char *separated_command[]) {
+void parsing_user_command(char *separated_command[], bool *flag) {
     // Maximum command length of 100 characters:
     char new_command[MAX_SIZE]; 
     // Printing the prompt:
@@ -32,18 +32,22 @@ void parsing_user_command(char *separated_command[]) {
     // replace '\n' at end with '\0':    
     if(new_command[strlen(new_command) - 1] == '\n')
         new_command[strlen(new_command) - 1] = '\0';
-    // Splitting the command into components:
-    char *single_word = strtok(new_command, " "); 
-    // Creating an array with the word-separated command:
-    int i = 0;
-    while (single_word != NULL) {
-        separated_command[i] = malloc(strlen(single_word) + 1); 
-        strcpy(separated_command[i], single_word); 
-        single_word = strtok(NULL, " "); 
-        i += 1;
-    }
-    //Adding NULL at end of the array to indicate ending:
-    separated_command[i] = NULL; 
+    // We will prepare to run the command only if we did not receive an empty command:
+    if (new_command[0] != '\0'){
+        *flag = true;
+        // Splitting the command into components:
+        char *single_word = strtok(new_command, " "); 
+        // Creating an array with the word-separated command:
+        int i = 0;
+        while (single_word != NULL) {
+            separated_command[i] = malloc(strlen(single_word) + 1); 
+            strcpy(separated_command[i], single_word); 
+            single_word = strtok(NULL, " "); 
+            i += 1;
+        }
+        //Adding NULL at end of the array to indicate ending:
+        separated_command[i] = NULL; 
+    } 
 }
 
 void add_commants_to_hisory(pid_t pid, char **separated_command, char **command_history, bool print) {
@@ -105,20 +109,17 @@ void non_builtin_command(char **separated_command, char **command_history) {
 }
 
 void run_command(char **separated_command, char **command_history) {
-    // We will run the command only if we did not receive an empty command:
-    if (strcmp(separated_command[0], "\0") != 0){
-        if (strcmp(separated_command[0], "cd") == 0) {
-            cd_command(separated_command, command_history);
-        } else if (strcmp(separated_command[0], "history") == 0) {
-            add_commants_to_hisory((int) getpid(), separated_command, command_history, true);
-        } else if (strcmp(separated_command[0], "exit") == 0) { // We will stop the program without error:
-            // Before we exit the program we will release the dynamic memory:
-            for (int i = 0; separated_command[i] != NULL; i++) {
-                free(separated_command[i]);}
-            exit(0);
-        } else { // for non-built-in commands:
-            non_builtin_command(separated_command, command_history);
-        }
+    if (strcmp(separated_command[0], "cd") == 0) {
+        cd_command(separated_command, command_history);
+    } else if (strcmp(separated_command[0], "history") == 0) {
+        add_commants_to_hisory((int) getpid(), separated_command, command_history, true);
+    } else if (strcmp(separated_command[0], "exit") == 0) { // We will stop the program without error:
+        // Before we exit the program we will release the dynamic memory:
+        for (int i = 0; separated_command[i] != NULL; i++) {
+            free(separated_command[i]);}
+        exit(0);
+    } else { // for non-built-in commands:
+        non_builtin_command(separated_command, command_history);
     }
 }
 
@@ -130,10 +131,13 @@ int main(int argc, char *argv[]) {
     //The length of a command is a maximum 100 and there are at most 100 commands:
     char *separated_command[MAX_SIZE]; 
     char *history[MAX_SIZE];
+    bool flag; // A flag that will receive a true value only if we receive a non-empty command
     //It can be assumed that there will be at most 100 commands, so the program will run until the user enters the "exit" command:
     while (true) {
-        parsing_user_command(separated_command); //get input from user
-        run_command(separated_command, history);
+        flag = false;
+        parsing_user_command(separated_command, &flag); 
+        if (flag){
+            run_command(separated_command, history);}
     }
     return 0;
 }
