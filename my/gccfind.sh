@@ -1,6 +1,7 @@
 #!/bin/bash
 #Netanel Landesman 315873588
 
+chmod 777 $0
 # Makes sure enough arguments are passed:
 if [ "$#" -lt 2 ]; then
   echo "Not enough parameters"
@@ -37,9 +38,3 @@ if $flag; then
     done
 fi
 
-
-#if $flag; then
-#  find "$folder_path" -type f -name "*.out" -delete
-#else
-#  find "$folder_path" -maxdepth 1 -type f -name "*.out" -delete
-#fi

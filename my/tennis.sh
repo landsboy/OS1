@@ -2,7 +2,7 @@
 #Netanel Landesman 315873588
 
 # Give a permission to the user who created the file:
-chmod 700 $0
+chmod 777 $0
 
 # This method prints the board of the game:
 board_printing () {
