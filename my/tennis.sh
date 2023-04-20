@@ -1,9 +1,6 @@
 #!/bin/bash
 #Netanel Landesman 315873588
 
-# Give a permission to the user who created the file:
-chmod 777 $0
-
 # This method prints the board of the game:
 board_printing () {
     # print the score of both players:

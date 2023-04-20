@@ -1,7 +1,6 @@
 #!/bin/bash
 #Netanel Landesman 315873588
 
-chmod 777 $0
 # Makes sure enough arguments are passed:
 if [ "$#" -lt 2 ]; then
   echo "Not enough parameters"
