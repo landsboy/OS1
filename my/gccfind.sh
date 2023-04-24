@@ -21,7 +21,7 @@ word="$2"
 find "$folder_path" -maxdepth 1 -type f -name "*.out" -delete
 
 # We will compile all files containing the given word:
-c_files=$(grep -li $word $folder_path/*.c)
+c_files=$(grep -E -l -i -w "$word([^a-z]?)" $folder_path/*.c)
 for file in $c_files; do
     gcc -w "$file" -o "${file%.*}.out"
 done
@@ -30,7 +30,7 @@ done
 if $flag; then
     # We will run through the entire contents of the folder:
     for file in $(ls $folder_path); do
-        if [[ -d "${folder_path}/${file}/" ]]; then
+        if [ -d "${folder_path}/${file}/" ]; then
             # If it is a folder we will run the program recursively:
             $($0 $folder_path/$file $word "-r")
         fi
