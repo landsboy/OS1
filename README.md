@@ -10,7 +10,7 @@ In the file my/gccfind.sh the script receives 2 arguments: a path to the folder 
 
 The '-r' flag can be added/dropped, if it appears the same command that is described should be executed only recursively on the given folder.
 
-An example of a run:
+Run command:
 ```
 sh my/gccfind.sh kslsssss -r
 ```
